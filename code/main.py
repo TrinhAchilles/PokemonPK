@@ -414,6 +414,7 @@ class Game:
 					
 		if not self.evolution and not evolved:
 			if 'overworld' in self.audio:
+				self.audio['overworld'].stop()
 				self.audio['overworld'].play(loops=-1)
 
 	def end_evolution(self):
@@ -424,6 +425,7 @@ class Game:
 		if 'evolution' in self.audio:
 			self.audio['evolution'].stop()
 		if 'overworld' in self.audio:
+			self.audio['overworld'].stop()
 			self.audio['overworld'].play(loops=-1)
 
 	# monster encounters 
