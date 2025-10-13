@@ -198,6 +198,7 @@ def monster_importer(cols, rows, *path):
 					frame_dict = import_tilemap(cols, rows, str(root_path), image_name)
 					for row, key in enumerate(('idle', 'attack')):
 						monster_dict[image_name][key] = [frame_dict[(col, row)] for col in range(cols)]
+					print(f"Loaded monster sprite: {image_name}")
 				except Exception as e:
 					print(f"Error importing monster {image_name}: {e}")
 					import traceback
@@ -205,7 +206,9 @@ def monster_importer(cols, rows, *path):
 	
 	# Print summary for debugging
 	if monster_dict:
-		print(f"Successfully loaded {len(monster_dict)} monster sprite sheets")
+		print(f"Successfully loaded {len(monster_dict)} monster sprite sheets: {list(monster_dict.keys())}")
+	else:
+		print(f"Warning: No monster sprites found in {folder_path}")
 	
 	return monster_dict
 
