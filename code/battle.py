@@ -338,6 +338,7 @@ class Battle:
 			alive_targets = [sprite for sprite in self.opponent_sprites.sprites() 
 							if sprite.monster.health > 0]
 			if not alive_targets:
+				self.update_all_monsters('resume')  # Resume battle even if no valid targets
 				return  # No valid targets, skip attack
 			random_target = choice(alive_targets)
 		else:
@@ -345,6 +346,7 @@ class Battle:
 			alive_targets = [sprite for sprite in self.player_sprites.sprites() 
 							if sprite.monster.health > 0]
 			if not alive_targets:
+				self.update_all_monsters('resume')  # Resume battle even if no valid targets
 				return  # No valid targets, skip attack
 			random_target = choice(alive_targets)
 		
