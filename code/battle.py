@@ -334,11 +334,22 @@ class Battle:
 		
 		# Choose target based on attack type
 		if ATTACK_DATA[ability]['target'] == 'player':
-			random_target = choice(self.opponent_sprites.sprites())
+			# Filter out dead monsters (health <= 0)
+			alive_targets = [sprite for sprite in self.opponent_sprites.sprites() 
+							if sprite.monster.health > 0]
+			if not alive_targets:
+				return  # No valid targets, skip attack
+			random_target = choice(alive_targets)
 		else:
-			random_target = choice(self.player_sprites.sprites())
+			# Filter out dead monsters (health <= 0)
+			alive_targets = [sprite for sprite in self.player_sprites.sprites() 
+							if sprite.monster.health > 0]
+			if not alive_targets:
+				return  # No valid targets, skip attack
+			random_target = choice(alive_targets)
 		
 		self.current_monster.activate_attack(random_target, ability)
+
 
 	def check_end_battle(self):
 		"""Check if battle should end"""
