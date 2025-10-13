@@ -27,6 +27,10 @@ def import_folder(*path):
 	
 	for root, sub_folders, image_names in walk(str(folder_path)):
 		for image_name in sorted(image_names, key=lambda name: int(name.split('.')[0]) if name.split('.')[0].isdigit() else 0):
+			# Skip hidden files (like .DS_Store on macOS)
+			if image_name.startswith('.'):
+				continue
+			
 			full_path = Path(root) / image_name
 			try:
 				surf = pygame.image.load(str(full_path)).convert_alpha()
@@ -46,6 +50,10 @@ def import_folder_dict(*path):
 	
 	for root, sub_folders, image_names in walk(str(folder_path)):
 		for image_name in image_names:
+			# Skip hidden files (like .DS_Store on macOS)
+			if image_name.startswith('.'):
+				continue
+			
 			full_path = Path(root) / image_name
 			try:
 				surf = pygame.image.load(str(full_path)).convert_alpha()
@@ -102,12 +110,28 @@ def all_character_import(*path):
 	
 	for root, _, image_names in walk(str(folder_path)):
 		for image in image_names:
+			# Skip hidden files (like .DS_Store on macOS)
+			if image.startswith('.'):
+				continue
+			
 			if image.endswith(('.png', '.jpg', '.jpeg')):
 				image_name = image.split('.')[0]
 				try:
-					new_dict[image_name] = character_importer(4, 4, *path, image_name)
+					# Use the actual path where the file was found (root), not the original path
+					root_path = Path(root)
+					new_dict[image_name] = character_importer(4, 4, str(root_path), image_name)
+					print(f"Loaded character sprite: {image_name}")
 				except Exception as e:
 					print(f"Error importing character {image_name}: {e}")
+					import traceback
+					traceback.print_exc()
+	
+	# Print summary of loaded characters for debugging
+	if new_dict:
+		print(f"Successfully loaded {len(new_dict)} character sprite sheets: {list(new_dict.keys())}")
+	else:
+		print(f"Warning: No character sprites found in {folder_path}")
+	
 	return new_dict
 
 def coast_importer(cols, rows, *path):
@@ -138,6 +162,10 @@ def tmx_importer(*path):
 	
 	for root, sub_folders, file_names in walk(str(folder_path)):
 		for file in file_names:
+			# Skip hidden files (like .DS_Store on macOS)
+			if file.startswith('.'):
+				continue
+			
 			if file.endswith('.tmx'):
 				try:
 					full_path = Path(root) / file
@@ -157,15 +185,28 @@ def monster_importer(cols, rows, *path):
 	
 	for root, sub_folders, image_names in walk(str(folder_path)):
 		for image in image_names:
+			# Skip hidden files (like .DS_Store on macOS)
+			if image.startswith('.'):
+				continue
+			
 			if image.endswith(('.png', '.jpg', '.jpeg')):
 				image_name = image.split('.')[0]
 				try:
 					monster_dict[image_name] = {}
-					frame_dict = import_tilemap(cols, rows, *path, image_name)
+					# Use the actual path where the file was found (root), not the original path
+					root_path = Path(root)
+					frame_dict = import_tilemap(cols, rows, str(root_path), image_name)
 					for row, key in enumerate(('idle', 'attack')):
 						monster_dict[image_name][key] = [frame_dict[(col, row)] for col in range(cols)]
 				except Exception as e:
 					print(f"Error importing monster {image_name}: {e}")
+					import traceback
+					traceback.print_exc()
+	
+	# Print summary for debugging
+	if monster_dict:
+		print(f"Successfully loaded {len(monster_dict)} monster sprite sheets")
+	
 	return monster_dict
 
 def outline_creator(frame_dict, width):
@@ -205,6 +246,10 @@ def attack_importer(*path):
 	
 	for root, _, image_names in walk(str(folder_path)):
 		for image in image_names:
+			# Skip hidden files (like .DS_Store on macOS)
+			if image.startswith('.'):
+				continue
+			
 			if image.endswith(('.png', '.jpg', '.jpeg')):
 				image_name = image.split('.')[0]
 				try:
@@ -225,6 +270,10 @@ def audio_importer(*path):
 	
 	for root, _, file_names in walk(str(folder_path)):
 		for file_name in file_names:
+			# Skip hidden files (like .DS_Store on macOS)
+			if file_name.startswith('.'):
+				continue
+			
 			if file_name.endswith(('.wav', '.mp3', '.ogg')):
 				try:
 					full_path = Path(root) / file_name
