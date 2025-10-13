@@ -182,13 +182,18 @@ class Battle:
 								)
 
 				elif self.selection_mode == 'attacks':
-					self.selection_mode = 'target'
-					self.selected_attack = self.current_monster.monster.get_abilities(all=False)[self.indexes['attacks']]
-					self.selection_side = ATTACK_DATA[self.selected_attack]['target']
+					abilities = self.current_monster.monster.get_abilities(all=False)
+					# Ensure index is within bounds (abilities list can change as energy is used)
+					if abilities and self.indexes['attacks'] < len(abilities):
+						self.selection_mode = 'target'
+						self.selected_attack = abilities[self.indexes['attacks']]
+						self.selection_side = ATTACK_DATA[self.selected_attack]['target']
 
 				elif self.selection_mode == 'general':
 					if self.indexes['general'] == 0:  # Fight
 						self.selection_mode = 'attacks'
+						# Reset attack index when entering attack mode to prevent out-of-bounds errors
+						self.indexes['attacks'] = 0
 					
 					elif self.indexes['general'] == 1:  # Defend
 						self.current_monster.monster.defending = True
