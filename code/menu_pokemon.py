@@ -212,20 +212,13 @@ class PokemonMainMenu:
 		self.title_font = self.load_custom_font('SVN-Determination Sans', 80)
 		self.button_font = self.load_custom_font('SVN-Determination Sans', 32)
 		
-		# Create title with outline (yellow text, blue outline)
-		self.title_surf = render_text_with_outline(
-			'Pokemon-PK',
-			self.title_font,
-			(255, 215, 0),  # Yellow/Gold
-			(0, 100, 255),  # Blue
-			outline_width=4
-		)
-		self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 150))
+		# Load custom logo image or fallback to text
+		self.load_title_logo()
 		
 		# Create menu buttons
 		self.menu_buttons = []
 		menu_center_x = WINDOW_WIDTH // 2
-		menu_y_start = 320
+		menu_y_start = 360  # Moved down from 320 to 360
 		menu_spacing = 70
 		
 		# Check if save exists to enable/disable Continue
@@ -278,6 +271,49 @@ class PokemonMainMenu:
 		except Exception as e:
 			print(f"Error loading font: {e}")
 			return pygame.font.Font(None, size)
+	
+	def load_title_logo(self):
+		"""Load custom logo image or fallback to text"""
+		logo_path = Path(__file__).parent.parent / 'graphics' / 'logo.png'
+		
+		try:
+			if logo_path.exists():
+				# Load custom logo image
+				self.title_surf = pygame.image.load(str(logo_path)).convert_alpha()
+				
+				# Scale the logo to make it smaller
+				max_width = 550  # Maximum width for logo
+				if self.title_surf.get_width() > max_width:
+					scale_factor = max_width / self.title_surf.get_width()
+					new_size = (int(self.title_surf.get_width() * scale_factor), 
+								int(self.title_surf.get_height() * scale_factor))
+					self.title_surf = pygame.transform.smoothscale(self.title_surf, new_size)
+				
+				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 110))
+				print("Custom logo loaded successfully!")
+			else:
+				# Fallback to text if logo not found
+				print("Logo file not found at graphics/logo.png, using text")
+				self.title_surf = render_text_with_outline(
+					'Pokemon-PK',
+					self.title_font,
+					(255, 215, 0),  # Yellow/Gold
+					(0, 100, 255),  # Blue
+					outline_width=4
+				)
+				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 110))
+		
+		except Exception as e:
+			print(f"Error loading logo: {e}, using text fallback")
+			# Fallback to text on error
+			self.title_surf = render_text_with_outline(
+				'Pokemon-PK',
+				self.title_font,
+				(255, 215, 0),  # Yellow/Gold
+				(0, 100, 255),  # Blue
+				outline_width=4
+			)
+			self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 90))
 	
 	def start_new_game(self):
 		"""Start a new game"""
