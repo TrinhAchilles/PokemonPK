@@ -63,9 +63,14 @@ class PokemonGame:
 	def start_new_game(self):
 		"""Start a new game"""
 		print("Starting new game...")
+		
+		# Cleanup menu first
+		if self.main_menu:
+			self.main_menu.cleanup()
+			self.main_menu = None
+		
+		# Switch to game mode
 		self.in_menu = False
-		self.main_menu.cleanup()
-		self.main_menu = None
 		
 		# Create new game instance
 		self.game = Game()
@@ -90,9 +95,13 @@ class PokemonGame:
 			self.start_new_game()
 			return
 		
+		# Cleanup menu first
+		if self.main_menu:
+			self.main_menu.cleanup()
+			self.main_menu = None
+		
+		# Switch to game mode
 		self.in_menu = False
-		self.main_menu.cleanup()
-		self.main_menu = None
 		
 		# Create game instance
 		self.game = Game()
@@ -178,9 +187,13 @@ class PokemonGame:
 							self.return_to_menu()
 			
 			# Update and draw
-			if self.in_menu and self.main_menu:
-				self.main_menu.update(dt)
-				self.main_menu.draw(self.display_surface)
+			if self.in_menu:
+				if self.main_menu:
+					self.main_menu.update(dt)
+					self.main_menu.draw(self.display_surface)
+				else:
+					# Menu was cleaned up, exit menu mode
+					self.in_menu = False
 				
 			elif self.game:
 				# Track playtime
