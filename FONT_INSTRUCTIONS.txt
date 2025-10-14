@@ -1,0 +1,109 @@
+================================================================================
+  HOW TO ADD CUSTOM FONT: SVN-Determination Sans
+================================================================================
+
+OPTION 1: Download the Font
+----------------------------
+1. Search Google for: "SVN Determination Sans font download"
+2. Or search: "Determination Sans font free download"
+3. Download the .ttf file
+
+4. Rename it to: SVN-Determination Sans.ttf
+   (exact name with spaces)
+
+5. Place it here:
+   workspace/graphics/fonts/SVN-Determination Sans.ttf
+
+6. Run the game - font will be automatically detected!
+
+
+OPTION 2: Use Alternative Font
+-------------------------------
+If you can't find SVN-Determination Sans, use these alternatives:
+
+Good Pokemon-style fonts:
+- Pokemon GB (classic Pokemon font)
+- Press Start 2P (retro gaming)
+- VT323 (monospace retro)
+- Determination Mono
+- Pixel Arial
+- Pokemon Classic
+
+Just download any .ttf file and rename it to:
+"SVN-Determination Sans.ttf"
+
+Then place in: workspace/graphics/fonts/
+
+
+OPTION 3: No Custom Font
+-------------------------
+Don't worry! The game works perfectly without custom font.
+It will use the existing game fonts as fallback.
+
+The menu will still look great with:
+- Yellow title with blue outline ✓
+- White buttons with black outline ✓
+- All functionality working ✓
+
+
+================================================================================
+  TESTING THE FONT
+================================================================================
+
+After adding the font:
+
+1. Run: python code/main_pokemon.py
+
+2. Look at the menu title "Pokemon-PK"
+
+3. If custom font is loaded, you'll see:
+   "Custom font loaded successfully"
+
+4. If fallback is used, you'll see:
+   "Custom font 'SVN-Determination Sans' not found, using default"
+
+Both options work perfectly!
+
+
+================================================================================
+  DIRECTORY STRUCTURE
+================================================================================
+
+workspace/
+└── graphics/
+    └── fonts/
+        ├── PixeloidSans.ttf              ← Already exists
+        ├── dogicapixelbold.otf           ← Already exists
+        └── SVN-Determination Sans.ttf    ← ADD THIS ONE
+
+The new font goes in the same folder as existing fonts!
+
+
+================================================================================
+  WHERE TO FIND FONTS
+================================================================================
+
+Free Font Websites:
+- dafont.com
+- 1001fonts.com  
+- fontspace.com
+- Google Fonts (fonts.google.com)
+
+Search terms:
+- "pokemon font"
+- "determination sans"
+- "retro game font"
+- "pixel font"
+
+Always check the license before using!
+
+
+================================================================================
+
+Quick Start (even without font):
+  cd code
+  python main_pokemon.py
+
+The game is ready to play! Font is just for extra polish. ✨
+
+================================================================================
