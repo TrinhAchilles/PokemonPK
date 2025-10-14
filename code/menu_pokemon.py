@@ -218,7 +218,7 @@ class PokemonMainMenu:
 		# Create menu buttons
 		self.menu_buttons = []
 		menu_center_x = WINDOW_WIDTH // 2
-		menu_y_start = 320
+		menu_y_start = 360  # Moved down from 320 to 360
 		menu_spacing = 70
 		
 		# Check if save exists to enable/disable Continue
@@ -289,7 +289,7 @@ class PokemonMainMenu:
 				# 				int(self.title_surf.get_height() * scale_factor))
 				# 	self.title_surf = pygame.transform.smoothscale(self.title_surf, new_size)
 				
-				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 150))
+				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 180))
 				print("Custom logo loaded successfully!")
 			else:
 				# Fallback to text if logo not found
@@ -301,7 +301,7 @@ class PokemonMainMenu:
 					(0, 100, 255),  # Blue
 					outline_width=4
 				)
-				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 150))
+				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 180))
 		
 		except Exception as e:
 			print(f"Error loading logo: {e}, using text fallback")
