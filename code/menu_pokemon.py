@@ -205,7 +205,7 @@ class PokemonMainMenu:
 		
 		# Overlay surface for darkening
 		self.overlay = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
-		self.overlay.set_alpha(120)
+		self.overlay.set_alpha(70)  # Reduced from 120 to 70 for brighter background
 		self.overlay.fill((0, 0, 0))
 		
 		# Load custom font or fallback
@@ -282,14 +282,14 @@ class PokemonMainMenu:
 				self.title_surf = pygame.image.load(str(logo_path)).convert_alpha()
 				
 				# Scale the logo to make it smaller
-				max_width = 550  # Maximum width for logo
+				max_width = 550  # Maximum width for logo (10% bigger than 300)
 				if self.title_surf.get_width() > max_width:
 					scale_factor = max_width / self.title_surf.get_width()
 					new_size = (int(self.title_surf.get_width() * scale_factor), 
 								int(self.title_surf.get_height() * scale_factor))
 					self.title_surf = pygame.transform.smoothscale(self.title_surf, new_size)
 				
-				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 110))
+				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 180))
 				print("Custom logo loaded successfully!")
 			else:
 				# Fallback to text if logo not found
@@ -301,7 +301,7 @@ class PokemonMainMenu:
 					(0, 100, 255),  # Blue
 					outline_width=4
 				)
-				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 110))
+				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 180))
 		
 		except Exception as e:
 			print(f"Error loading logo: {e}, using text fallback")
@@ -313,7 +313,7 @@ class PokemonMainMenu:
 				(0, 100, 255),  # Blue
 				outline_width=4
 			)
-			self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 90))
+			self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 150))
 	
 	def start_new_game(self):
 		"""Start a new game"""
@@ -371,7 +371,7 @@ class PokemonMainMenu:
 					save_text = "Save file available"
 				
 				save_surf = info_font.render(save_text, True, (200, 200, 200))
-				save_rect = save_surf.get_rect(center=(WINDOW_WIDTH // 2, 250))
+				save_rect = save_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 50))  # Moved to bottom
 				surface.blit(save_surf, save_rect)
 		
 		# Draw menu buttons
