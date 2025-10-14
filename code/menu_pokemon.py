@@ -282,7 +282,7 @@ class PokemonMainMenu:
 				self.title_surf = pygame.image.load(str(logo_path)).convert_alpha()
 				
 				# Scale the logo to make it smaller
-				max_width = 330  # Maximum width for logo (10% bigger than 300)
+				max_width = 300  # Maximum width for logo (made smaller)
 				if self.title_surf.get_width() > max_width:
 					scale_factor = max_width / self.title_surf.get_width()
 					new_size = (int(self.title_surf.get_width() * scale_factor), 
@@ -371,7 +371,7 @@ class PokemonMainMenu:
 					save_text = "Save file available"
 				
 				save_surf = info_font.render(save_text, True, (200, 200, 200))
-				save_rect = save_surf.get_rect(center=(WINDOW_WIDTH // 2, 250))
+				save_rect = save_surf.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT - 50))  # Moved to bottom
 				surface.blit(save_surf, save_rect)
 		
 		# Draw menu buttons
