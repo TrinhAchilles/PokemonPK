@@ -205,7 +205,7 @@ class PokemonMainMenu:
 		
 		# Overlay surface for darkening
 		self.overlay = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
-		self.overlay.set_alpha(120)
+		self.overlay.set_alpha(70)  # Reduced from 120 to 70 for brighter background
 		self.overlay.fill((0, 0, 0))
 		
 		# Load custom font or fallback
