@@ -286,7 +286,15 @@ class Battle:
 		target_defense = max(0.0, min(1.0, target_defense))
 
 		# Apply damage
-		target_sprite.monster.health -= amount * target_defense
+		# Calculate final damage
+		final_damage = amount * target_defense
+		
+		# Ensure minimum damage of 1 (unless it's a heal which has negative amount)
+		if amount > 0:  # Only for damaging attacks, not heals
+			final_damage = max(1.0, final_damage)
+		
+		# Apply damage
+		target_sprite.monster.health -= final_damage
 		self.check_death()
 
 		# Resume battle
