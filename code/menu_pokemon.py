@@ -18,11 +18,17 @@ class VideoBackground:
 		self.frame_count = 0
 		self.total_frames = 0
 		
+		# Frame timing for correct playback speed
+		self.frame_time = 0.0
+		self.time_per_frame = 1.0 / 30.0  # Default to 30 FPS
+		
 		# Try to load video
 		if Path(video_path).exists():
 			self.cap = cv2.VideoCapture(str(video_path))
 			self.fps = self.cap.get(cv2.CAP_PROP_FPS) or 30
 			self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+			self.time_per_frame = 1.0 / self.fps  # Calculate time per frame
+			print(f"Video loaded: {self.fps} FPS, {self.total_frames} frames")
 		else:
 			print(f"Warning: Video file not found at {video_path}")
 			# Create a fallback gradient background
@@ -38,23 +44,30 @@ class VideoBackground:
 							(0, y), (WINDOW_WIDTH, y))
 		return surf
 	
-	def update(self):
-		"""Read next frame from video"""
+	def update(self, dt):
+		"""Read next frame from video at correct speed"""
 		if self.cap and self.cap.isOpened():
-			ret, frame = self.cap.read()
+			# Accumulate time
+			self.frame_time += dt
 			
-			if not ret:
-				# Loop video
-				self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+			# Only read next frame when enough time has passed
+			if self.frame_time >= self.time_per_frame:
+				self.frame_time -= self.time_per_frame
+				
 				ret, frame = self.cap.read()
-			
-			if ret:
-				# Convert from OpenCV BGR to Pygame RGB
-				frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-				# Resize to window size
-				frame = cv2.resize(frame, (WINDOW_WIDTH, WINDOW_HEIGHT))
-				# Convert to pygame surface
-				self.current_frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
+				
+				if not ret:
+					# Loop video
+					self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+					ret, frame = self.cap.read()
+				
+				if ret:
+					# Convert from OpenCV BGR to Pygame RGB
+					frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+					# Resize to window size
+					frame = cv2.resize(frame, (WINDOW_WIDTH, WINDOW_HEIGHT))
+					# Convert to pygame surface
+					self.current_frame = pygame.surfarray.make_surface(frame.swapaxes(0, 1))
 		
 		return self.current_frame
 	
@@ -290,8 +303,8 @@ class PokemonMainMenu:
 	
 	def update(self, dt):
 		"""Update menu"""
-		# Update video background
-		self.video_bg.update()
+		# Update video background with delta time
+		self.video_bg.update(dt)
 		
 		# Update buttons
 		for button in self.menu_buttons:
