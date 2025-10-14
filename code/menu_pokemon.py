@@ -281,8 +281,8 @@ class PokemonMainMenu:
 				# Load custom logo image
 				self.title_surf = pygame.image.load(str(logo_path)).convert_alpha()
 				
-				# Scale the logo to make it smaller
-				max_width = 330  # Maximum width for logo (10% bigger than 300)
+				# Scale the logo
+				max_width = 550  # Maximum width for logo
 				if self.title_surf.get_width() > max_width:
 					scale_factor = max_width / self.title_surf.get_width()
 					new_size = (int(self.title_surf.get_width() * scale_factor), 
