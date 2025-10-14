@@ -176,10 +176,11 @@ class Player(Entity):
 		self.noticed = False
 
 	def input(self):
-		"""Handle player keyboard input"""
+		"""Handle player keyboard input - Arrow keys and WASD"""
 		keys = pygame.key.get_pressed()
 		input_vector = vector(0, 0)
 		
+		# Arrow keys
 		if keys[pygame.K_UP]:
 			input_vector.y -= 1
 		if keys[pygame.K_DOWN]:
@@ -187,6 +188,16 @@ class Player(Entity):
 		if keys[pygame.K_LEFT]:
 			input_vector.x -= 1
 		if keys[pygame.K_RIGHT]:
+			input_vector.x += 1
+		
+		# WASD keys
+		if keys[pygame.K_w]:
+			input_vector.y -= 1
+		if keys[pygame.K_s]:
+			input_vector.y += 1
+		if keys[pygame.K_a]:
+			input_vector.x -= 1
+		if keys[pygame.K_d]:
 			input_vector.x += 1
 		
 		# Normalize diagonal movement
