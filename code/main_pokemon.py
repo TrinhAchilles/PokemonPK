@@ -20,6 +20,7 @@ class PokemonGame:
 		# Game state
 		self.in_menu = True
 		self.game = None
+		self.game_to_start = None  # 'new', 'continue', or None
 		self.save_system = SaveSystem()
 		
 		# Auto-save settings
@@ -64,59 +65,16 @@ class PokemonGame:
 		"""Start a new game"""
 		print("Starting new game...")
 		
-		# Cleanup menu first
-		if self.main_menu:
-			self.main_menu.cleanup()
-			self.main_menu = None
-		
-		# Switch to game mode
-		self.in_menu = False
-		
-		# Create new game instance
-		self.game = Game()
-		
-		# Add tracking variables to game
-		self.game.total_play_time = 0.0
-		self.game.current_map_name = 'world'
-		self.game.current_spawn_name = 'house'
-		
-		# Reset auto-save timer
-		self.time_since_last_save = 0.0
-		self.total_play_time = 0.0
+		# Don't cleanup immediately - just mark for transition
+		# This prevents crash when button click is processed mid-frame
+		self.game_to_start = 'new'
 	
 	def continue_game(self):
 		"""Continue from saved game"""
 		print("Loading saved game...")
 		
-		# Load save data
-		save_data = self.save_system.load_game()
-		if not save_data:
-			print("Failed to load save, starting new game instead")
-			self.start_new_game()
-			return
-		
-		# Cleanup menu first
-		if self.main_menu:
-			self.main_menu.cleanup()
-			self.main_menu = None
-		
-		# Switch to game mode
-		self.in_menu = False
-		
-		# Create game instance
-		self.game = Game()
-		
-		# Apply saved state
-		apply_game_state(self.game, save_data)
-		
-		# Restore playtime
-		self.total_play_time = save_data.get('game_time', 0.0)
-		self.game.total_play_time = self.total_play_time
-		
-		# Reset auto-save timer
-		self.time_since_last_save = 0.0
-		
-		print(f"Game loaded! Playtime: {self.total_play_time:.1f}s")
+		# Mark for transition instead of immediate load
+		self.game_to_start = 'continue'
 	
 	def exit_game(self):
 		"""Exit the game"""
@@ -186,14 +144,49 @@ class PokemonGame:
 							# Return to menu (with auto-save)
 							self.return_to_menu()
 			
-			# Update and draw
-			if self.in_menu:
+			# Handle game start transitions (do this BEFORE update/draw)
+			if self.game_to_start:
+				# Cleanup menu
 				if self.main_menu:
-					self.main_menu.update(dt)
-					self.main_menu.draw(self.display_surface)
-				else:
-					# Menu was cleaned up, exit menu mode
-					self.in_menu = False
+					self.main_menu.cleanup()
+					self.main_menu = None
+				
+				self.in_menu = False
+				
+				if self.game_to_start == 'new':
+					# Create new game
+					self.game = Game()
+					self.game.total_play_time = 0.0
+					self.game.current_map_name = 'world'
+					self.game.current_spawn_name = 'house'
+					self.time_since_last_save = 0.0
+					self.total_play_time = 0.0
+					
+				elif self.game_to_start == 'continue':
+					# Load saved game
+					save_data = self.save_system.load_game()
+					if save_data:
+						self.game = Game()
+						apply_game_state(self.game, save_data)
+						self.total_play_time = save_data.get('game_time', 0.0)
+						self.game.total_play_time = self.total_play_time
+						self.time_since_last_save = 0.0
+						print(f"Game loaded! Playtime: {self.total_play_time:.1f}s")
+					else:
+						# Load failed, start new game
+						self.game = Game()
+						self.game.total_play_time = 0.0
+						self.game.current_map_name = 'world'
+						self.game.current_spawn_name = 'house'
+						self.time_since_last_save = 0.0
+						self.total_play_time = 0.0
+				
+				self.game_to_start = None  # Clear flag
+			
+			# Update and draw
+			if self.in_menu and self.main_menu:
+				self.main_menu.update(dt)
+				self.main_menu.draw(self.display_surface)
 				
 			elif self.game:
 				# Track playtime
