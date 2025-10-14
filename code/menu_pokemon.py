@@ -282,7 +282,7 @@ class PokemonMainMenu:
 				self.title_surf = pygame.image.load(str(logo_path)).convert_alpha()
 				
 				# Scale the logo to make it smaller
-				max_width = 300  # Maximum width for logo (adjust this to make bigger/smaller)
+				max_width = 330  # Maximum width for logo (10% bigger than 300)
 				if self.title_surf.get_width() > max_width:
 					scale_factor = max_width / self.title_surf.get_width()
 					new_size = (int(self.title_surf.get_width() * scale_factor), 
@@ -387,3 +387,4 @@ class PokemonMainMenu:
 	def cleanup(self):
 		"""Cleanup resources"""
 		self.video_bg.cleanup()
+o_bg.cleanup()
