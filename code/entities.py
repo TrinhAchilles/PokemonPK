@@ -190,7 +190,7 @@ class Player(Entity):
 		if keys[pygame.K_RIGHT]:
 			input_vector.x += 1
 		
-		# WASD keys
+		# WASD keys - try both lowercase and uppercase
 		if keys[pygame.K_w]:
 			input_vector.y -= 1
 		if keys[pygame.K_s]:
