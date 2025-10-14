@@ -387,6 +387,3 @@ class PokemonMainMenu:
 	def cleanup(self):
 		"""Cleanup resources"""
 		self.video_bg.cleanup()
-(self):
-		"""Cleanup resources"""
-		self.video_bg.cleanup()
