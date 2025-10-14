@@ -281,13 +281,13 @@ class PokemonMainMenu:
 				# Load custom logo image
 				self.title_surf = pygame.image.load(str(logo_path)).convert_alpha()
 				
-				# Optional: Scale the logo if needed (uncomment and adjust if too big/small)
-				# max_width = 400  # Maximum width for logo
-				# if self.title_surf.get_width() > max_width:
-				# 	scale_factor = max_width / self.title_surf.get_width()
-				# 	new_size = (int(self.title_surf.get_width() * scale_factor), 
-				# 				int(self.title_surf.get_height() * scale_factor))
-				# 	self.title_surf = pygame.transform.smoothscale(self.title_surf, new_size)
+				# Scale the logo to make it smaller
+				max_width = 300  # Maximum width for logo (adjust this to make bigger/smaller)
+				if self.title_surf.get_width() > max_width:
+					scale_factor = max_width / self.title_surf.get_width()
+					new_size = (int(self.title_surf.get_width() * scale_factor), 
+								int(self.title_surf.get_height() * scale_factor))
+					self.title_surf = pygame.transform.smoothscale(self.title_surf, new_size)
 				
 				self.title_rect = self.title_surf.get_rect(center=(WINDOW_WIDTH // 2, 180))
 				print("Custom logo loaded successfully!")
@@ -385,5 +385,8 @@ class PokemonMainMenu:
 		surface.blit(version_surf, version_rect)
 	
 	def cleanup(self):
+		"""Cleanup resources"""
+		self.video_bg.cleanup()
+(self):
 		"""Cleanup resources"""
 		self.video_bg.cleanup()
