@@ -8,7 +8,9 @@ from menu_pokemon import PokemonMainMenu
 from main import Game
 from save_system import SaveSystem, create_game_state_snapshot, apply_game_state
 from loading_screen import LoadingScreen
+from splash_screen import SplashScreen
 from loading_screen import LoadingScreen
+from splash_screen import SplashScreen
 
 class PokemonGame:
 	"""Main game wrapper with Pokemon-PK menu and save system"""
@@ -20,7 +22,9 @@ class PokemonGame:
 		self.running = True
 		
 		# Game state
-		self.in_menu = True
+		self.in_splash = True
+		self.splash_screen = SplashScreen(self.display_surface)
+		self.in_menu = False
 		self.in_loading = False
 		self.loading_screen = None
 		self.game = None
@@ -57,13 +61,8 @@ class PokemonGame:
 				'bold': pygame.font.Font(None, 20),
 			}
 		
-		# Initialize main menu
-		self.main_menu = PokemonMainMenu(
-			self.start_new_game,
-			self.continue_game,
-			self.exit_game,
-			self.fonts
-		)
+		# Main menu will be initialized after splash screen
+		self.main_menu = None
 	
 	def start_new_game(self):
 		"""Start a new game"""
@@ -164,7 +163,26 @@ class PokemonGame:
 			
 			
 			# Update and draw
-			if self.in_menu and self.main_menu:
+			if self.in_splash and self.splash_screen:
+				# Show splash screen
+				still_showing = self.splash_screen.update(dt)
+				self.splash_screen.draw()
+				
+				# Check if splash is complete
+				if not still_showing:
+					self.in_splash = False
+					self.splash_screen = None
+					
+					# Now create and show main menu
+					self.in_menu = True
+					self.main_menu = PokemonMainMenu(
+						self.start_new_game,
+						self.continue_game,
+						self.exit_game,
+						self.fonts
+					)
+			
+			elif self.in_menu and self.main_menu:
 				self.main_menu.update(dt)
 				self.main_menu.draw(self.display_surface)
 			
