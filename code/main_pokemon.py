@@ -100,15 +100,15 @@ class PokemonGame:
 	def return_to_menu(self):
 		"""Return to main menu (auto-save first)"""
 		if self.game:
-			# Auto-save		# Stop game music
-		if hasattr(self.game, 'audio'):
-			if 'overworld' in self.game.audio:
-				self.game.audio['overworld'].stop()
-			if 'battle' in self.game.audio:
-				self.game.audio['battle'].stop()
-	
-	# Recreate menu (this will start menu music)
-	self.in_menu = True 'battle' in self.game.audio:
+			# Auto-save before returning to menu
+			print("Saving game before returning to menu...")
+			self.auto_save()
+			
+			# Stop music
+			if hasattr(self.game, 'audio'):
+				if 'overworld' in self.game.audio:
+					self.game.audio['overworld'].stop()
+				if 'battle' in self.game.audio:
 					self.game.audio['battle'].stop()
 		
 		# Recreate menu
