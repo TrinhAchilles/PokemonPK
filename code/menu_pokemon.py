@@ -247,6 +247,32 @@ class PokemonMainMenu:
 		
 		# Show save info if available
 		self.save_metadata = self.save_system.get_save_metadata() if save_exists else None
+		# Menu music
+		self.menu_music = None
+		self.load_menu_music()
+	
+	def load_menu_music(self):
+		"""Load and play menu background music"""
+		try:
+			audio_path = Path(__file__).parent.parent / 'audio'
+			menu_music_files = ['menu.mp3', 'menu.wav', 'menu.ogg', 'menu_music.mp3', 'menu_music.wav', 'menu_music.ogg']
+			
+			for music_file in menu_music_files:
+				music_path = audio_path / music_file
+				if music_path.exists():
+					print(f"Loading menu music: {music_file}")
+					try:
+						self.menu_music = pygame.mixer.Sound(str(music_path))
+						self.menu_music.set_volume(0.5)
+						self.menu_music.play(loops=-1)
+						print(f"Menu music '{music_file}' playing")
+						break
+					except Exception as e:
+						print(f"Error loading menu music {music_file}: {e}")
+			else:
+				print("No menu music found. Place a 'menu.mp3', 'menu.wav', or 'menu.ogg' file in the 'audio' folder.")
+		except Exception as e:
+			print(f"Error setting up menu music: {e}")
 	
 	def load_custom_font(self, font_name, size):
 		"""Load custom font or fallback to default"""
@@ -386,4 +412,10 @@ class PokemonMainMenu:
 	
 	def cleanup(self):
 		"""Cleanup resources"""
+		if self.menu_music:
+			try:
+				self.menu_music.stop()
+				print("Menu music stopped")
+			except Exception as e:
+				print(f"Error stopping menu music: {e}")
 		self.video_bg.cleanup()
