@@ -5,7 +5,14 @@ Shows animated loading screen with click-to-continue prompt
 import pygame
 from pathlib import Path
 from settings import *
-from PIL import Image
+
+# Try to import PIL for GIF support, but don't fail if not available
+try:
+	from PIL import Image
+	PIL_AVAILABLE = True
+except ImportError:
+	PIL_AVAILABLE = False
+	print("PIL (Pillow) not available. Loading screen will use placeholder animation.")
 
 class LoadingScreen:
 	"""Loading screen with animated GIF and click-to-continue prompt"""
@@ -38,6 +45,12 @@ class LoadingScreen:
 		try:
 			# Look for loading GIF in graphics folder
 			gif_path = Path(__file__).parent.parent / 'graphics' / 'loading.gif'
+			
+			if not PIL_AVAILABLE:
+				print("PIL not available. Using placeholder animation.")
+				print("To use GIF animations, install Pillow: pip install Pillow")
+				self.create_placeholder_animation()
+				return
 			
 			if gif_path.exists():
 				print(f"Loading GIF: {gif_path}")

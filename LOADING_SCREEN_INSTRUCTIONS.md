@@ -11,7 +11,23 @@ A loading screen now appears when you click "New Game" or "Continue" with these 
 
 ## 🚀 How to Use
 
-### Step 1: Add Your Loading GIF
+### Step 1: Install Dependencies (Optional - for GIF support)
+
+To use custom GIF animations, you need Pillow:
+
+```bash
+pip install Pillow
+```
+
+**OR** install all dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+**Note**: The loading screen will work without Pillow! It will just use a simple rotating circle animation instead of your custom GIF.
+
+### Step 2: Add Your Loading GIF (Optional)
 
 Place a GIF file named `loading.gif` in the `graphics` folder:
 
@@ -21,13 +37,13 @@ graphics/loading.gif
 
 If you don't have a loading GIF yet, the system will automatically create a simple rotating circle animation as a placeholder.
 
-### Step 2: Run the Game
+### Step 3: Run the Game
 
 ```bash
 python code/main_pokemon.py
 ```
 
-### Step 3: Test It!
+### Step 4: Test It!
 
 1. Click "New Game" or "Continue" from the main menu
 2. You'll see the loading screen with your GIF
