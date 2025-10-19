@@ -1,12 +1,12 @@
 """
 Pokemon-PK Main Game Launcher
 Integrates custom menu with save/load system and auto-save
-"""
-import pygame
+"import pygame
 from settings import *
 from menu_pokemon import PokemonMainMenu
 from main import Game
 from save_system import SaveSystem, create_game_state_snapshot, apply_game_state
+from loading_screen import LoadingScreenme_state
 
 class PokemonGame:
 	"""Main game wrapper with Pokemon-PK menu and save system"""
@@ -15,13 +15,13 @@ class PokemonGame:
 		self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 		pygame.display.set_caption('Pokemon-PK')
 		self.clock = pygame.Clock()
-		self.running = True
-		
-		# Game state
-		self.in_menu = True
-		self.game = None
-		self.game_to_start = None  # 'new', 'continue', or None
-		self.save_system = SaveSystem()
+		self.runnin	# Game state
+	self.in_menu = True
+	self.in_loading = False
+	self.loading_screen = None
+	self.game = None
+	self.game_to_start = None  # 'new', 'continue', or None
+	self.save_system = SaveSystem()tem = SaveSystem()
 		
 		# Auto-save settings
 		self.auto_save_interval = 60.0  # Auto-save every 60 seconds
@@ -138,45 +138,19 @@ class PokemonGame:
 					
 				elif event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
-						if self.in_menu:
-							self.running = False
-						else:
-							# Return to menu (with auto-save)
-							self.return_to_menu()
+						if		# Handle game start transitions (do this BEFORE update/draw)
+		if self.game_to_start and not self.in_loading:
+			# Cleanup menu
+			if self.main_menu:
+				self.main_menu.cleanup()
+				self.main_menu = None
 			
-			# Handle game start transitions (do this BEFORE update/draw)
-			if self.game_to_start:
-				# Cleanup menu
-				if self.main_menu:
-					self.main_menu.cleanup()
-					self.main_menu = None
-				
-				self.in_menu = False
-				
-				if self.game_to_start == 'new':
-					# Create new game
-					self.game = Game()
-					self.game.total_play_time = 0.0
-					self.game.current_map_name = 'world'
-					self.game.current_spawn_name = 'house'
-					self.time_since_last_save = 0.0
-					self.total_play_time = 0.0
-					
-				elif self.game_to_start == 'continue':
-					# Load saved game
-					save_data = self.save_system.load_game()
-					if save_data:
-						self.game = Game()
-						apply_game_state(self.game, save_data)
-						self.total_play_time = save_data.get('game_time', 0.0)
-						self.game.total_play_time = self.total_play_time
-						self.time_since_last_save = 0.0
-						print(f"Game loaded! Playtime: {self.total_play_time:.1f}s")
-					else:
-						# Load failed, start new game
-						self.game = Game()
-						self.game.total_play_time = 0.0
-						self.game.current_map_name = 'world'
+			self.in_menu = False
+			self.in_loading = True
+			
+			# Create loading screen
+			self.loading_screen = LoadingScreen(self.display_surface, self.fonts)
+			# game_to_start will be used after loading screen completesd'
 						self.game.current_spawn_name = 'house'
 						self.time_since_last_save = 0.0
 						self.total_play_time = 0.0
