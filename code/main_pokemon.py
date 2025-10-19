@@ -1,13 +1,13 @@
 """
 Pokemon-PK Main Game Launcher
 Integrates custom menu with save/load system and auto-save
-"import pygame
+"""
+import pygame
 from settings import *
 from menu_pokemon import PokemonMainMenu
 from main import Game
 from save_system import SaveSystem, create_game_state_snapshot, apply_game_state
 from loading_screen import LoadingScreen
-from loading_screen import LoadingScreenme_state
 
 class PokemonGame:
 	"""Main game wrapper with Pokemon-PK menu and save system"""
@@ -16,13 +16,13 @@ class PokemonGame:
 		self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 		pygame.display.set_caption('Pokemon-PK')
 		self.clock = pygame.Clock()
-		self.runnin	# Game state
-	self.in_menu = True
-	self.in_loading = False
-	self.loading_screen = None
-	self.game = None
-	self.game_to_start = None  # 'new', 'continue', or None
-	self.save_system = SaveSystem()tem = SaveSystem()
+		self.running = True
+		
+		# Game state
+		self.in_menu = True
+		self.game = None
+		self.game_to_start = None  # 'new', 'continue', or None
+		self.save_system = SaveSystem()
 		
 		# Auto-save settings
 		self.auto_save_interval = 60.0  # Auto-save every 60 seconds
@@ -139,7 +139,13 @@ class PokemonGame:
 					
 				elif event.type == pygame.KEYDOWN:
 					if event.key == pygame.K_ESCAPE:
-						if		# Handle game start transitions (do this BEFORE update/draw)
+						if self.in_menu:
+							self.running = False
+						else:
+							# Return to menu (with auto-save)
+							self.return_to_menu()
+			
+		# Handle game start transitions (do this BEFORE update/draw)
 		if self.game_to_start and not self.in_loading:
 			# Cleanup menu
 			if self.main_menu:
@@ -151,13 +157,8 @@ class PokemonGame:
 			
 			# Create loading screen
 			self.loading_screen = LoadingScreen(self.display_surface, self.fonts)
-			# game_to_start will be used after loading screen completesd'
-						self.game.current_spawn_name = 'house'
-						self.time_since_last_save = 0.0
-						self.total_play_time = 0.0
-				
-				self.game_to_start = None  # Clear flag
-			
+			# game_to_start will be used after loading screen completes
+		
 			# Update and draw
 			if self.in_menu and self.main_menu:
 				self.main_menu.update(dt)
