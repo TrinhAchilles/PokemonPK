@@ -15,23 +15,23 @@ class PokemonGame:
 		pygame.init()
 		self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 		pygame.display.set_caption('Pokemon-PK')
-		self.clock = pygame.Clock()
-		self.running = True
-		
-		# Game state
-		self.in_menu = True
-		self.in_loading = False
-		self.loading_screen = None
-		self.game = None
-		self.game_to_start = None  # 'new', 'continue', or None
-		self.save_system = SaveSystem()
-		
-		# Auto-save settings
-		self.auto_save_interval = 60.0  # Auto-save every 60 seconds
-		self.time_since_last_save = 0.0
-		
-		# Track total playtime
-		self.total_play_time = 0.0
+	self.clock = pygame.Clock()
+	self.running = True
+	
+	# Game state
+	self.in_menu = True
+	self.in_loading = False
+	self.loading_screen = None
+	self.game = None
+	self.game_to_start = None  # 'new', 'continue', or None
+	self.save_system = SaveSystem()
+	
+	# Auto-save settings
+	self.auto_save_interval = 60.0  # Auto-save every 60 seconds
+	self.time_since_last_save = 0.0
+	
+	# Track total playtime
+	self.total_play_time = 0.0
 		
 		# Load fonts early for menu
 		from pathlib import Path
@@ -147,21 +147,20 @@ class PokemonGame:
 							# Return to menu (with auto-save)
 							self.return_to_menu()
 			
-			# Handle game start transitions (do this BEFORE update/draw)
-			if self.game_to_start and not self.in_loading:
-				# Cleanup menu
-				if self.main_menu:
-					self.main_menu.cleanup()
-					self.main_menu = None
-				
-				self.in_menu = False
-				self.in_loading = True
-				
-				# Create loading screen
-				self.loading_screen = LoadingScreen(self.display_surface, self.fonts)
-				# game_to_start will be used after loading screen completes
+		# Handle game start transitions (do this BEFORE update/draw)
+		if self.game_to_start and not self.in_loading:
+			# Cleanup menu
+			if self.main_menu:
+				self.main_menu.cleanup()
+				self.main_menu = None
 			
+			self.in_menu = False
+			self.in_loading = True
 			
+			# Create loading screen
+			self.loading_screen = LoadingScreen(self.display_surface, self.fonts)
+			# game_to_start will be used after loading screen completes
+		
 			# Update and draw
 			if self.in_menu and self.main_menu:
 				self.main_menu.update(dt)
