@@ -102,6 +102,7 @@ class LoadingScreen:
 	
 	def create_placeholder_animation(self):
 		"""Create a simple placeholder animation if GIF not found"""
+		print("Creating placeholder animation...")
 		# Create simple rotating circle animation
 		for i in range(12):
 			surf = pygame.Surface((200, 200), pygame.SRCALPHA)
@@ -117,6 +118,7 @@ class LoadingScreen:
 			self.gif_frames.append(surf)
 		
 		self.frame_duration = 0.08  # Faster for placeholder
+		print(f"Created {len(self.gif_frames)} animation frames")
 	
 	def load_custom_font(self, font_name, size):
 		"""Load custom font or fallback to default"""
@@ -195,6 +197,10 @@ class LoadingScreen:
 			current_frame = self.gif_frames[self.current_frame_index]
 			frame_rect = current_frame.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 50))
 			self.display_surface.blit(current_frame, frame_rect)
+		else:
+			# Debug: Draw a simple white rectangle if no frames
+			pygame.draw.rect(self.display_surface, (255, 255, 255), 
+							(WINDOW_WIDTH // 2 - 100, WINDOW_HEIGHT // 2 - 100, 200, 200))
 		
 		# Draw "Click anywhere to continue" after delay
 		if self.elapsed_time >= self.show_prompt_after:
