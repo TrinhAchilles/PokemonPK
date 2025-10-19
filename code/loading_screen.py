@@ -26,12 +26,17 @@ class LoadingScreen:
 		self.elapsed_time = 0.0
 		self.show_prompt_after = 3.0  # Show prompt after 3 seconds
 		
-		# GIF animation
+		# GIF animation (background)
 		self.gif_frames = []
 		self.current_frame_index = 0
 		self.frame_duration = 0.1  # 100ms per frame (10 FPS)
 		self.frame_timer = 0.0
 		self.load_gif()
+		
+		# Rotating circle overlay
+		self.circle_angle = 0
+		self.circle_frames = []
+		self.create_circle_animation()
 		
 		# Load custom font for prompt
 		self.prompt_font = self.load_custom_font('SVN-Determination Sans', 32)
@@ -58,33 +63,28 @@ class LoadingScreen:
 				# Open GIF with PIL
 				gif = Image.open(str(gif_path))
 				
-				# Extract all frames
-				frame_count = 0
-				try:
-					while True:
-						# Convert PIL image to pygame surface
-						frame = gif.convert('RGBA')
-						
-						# Scale to reasonable size if needed
-						max_size = 400
-						if frame.width > max_size or frame.height > max_size:
-							# Calculate scaling
-							scale = min(max_size / frame.width, max_size / frame.height)
-							new_size = (int(frame.width * scale), int(frame.height * scale))
-							frame = frame.resize(new_size, Image.Resampling.LANCZOS)
-						
-						# Convert to pygame surface
-						mode = frame.mode
-						size = frame.size
-						data = frame.tobytes()
-						
-						py_image = pygame.image.fromstring(data, size, mode)
-						self.gif_frames.append(py_image)
-						
-						frame_count += 1
-						gif.seek(gif.tell() + 1)
-				except EOFError:
-					pass  # End of GIF frames
+			# Extract all frames
+			frame_count = 0
+			try:
+				while True:
+					# Convert PIL image to pygame surface
+					frame = gif.convert('RGBA')
+					
+					# Scale to full screen
+					frame = frame.resize((WINDOW_WIDTH, WINDOW_HEIGHT), Image.Resampling.LANCZOS)
+					
+					# Convert to pygame surface
+					mode = frame.mode
+					size = frame.size
+					data = frame.tobytes()
+					
+					py_image = pygame.image.fromstring(data, size, mode)
+					self.gif_frames.append(py_image)
+					
+					frame_count += 1
+					gif.seek(gif.tell() + 1)
+			except EOFError:
+				pass  # End of GIF frames
 				
 				print(f"Loaded {frame_count} frames from GIF")
 				
@@ -101,24 +101,39 @@ class LoadingScreen:
 			self.create_placeholder_animation()
 	
 	def create_placeholder_animation(self):
-		"""Create a simple placeholder animation if GIF not found"""
-		print("Creating placeholder animation...")
-		# Create simple rotating circle animation
-		for i in range(12):
-			surf = pygame.Surface((200, 200), pygame.SRCALPHA)
-			angle = i * 30
+		"""Create a simple full-screen gradient if GIF not found"""
+		print("Creating placeholder background...")
+		# Create a single dark gradient frame as background
+		surf = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT))
+		for y in range(WINDOW_HEIGHT):
+			color_value = int(30 * (1 - y / WINDOW_HEIGHT))
+			pygame.draw.line(surf, (color_value, color_value // 2, color_value + 20), 
+							(0, y), (WINDOW_WIDTH, y))
+		self.gif_frames.append(surf)
+		self.frame_duration = 0.1
+		print(f"Created placeholder background")
+	
+	def create_circle_animation(self):
+		"""Create rotating white circle with black outline"""
+		print("Creating circle overlay animation...")
+		for i in range(36):  # 36 frames for smooth rotation
+			surf = pygame.Surface((300, 300), pygame.SRCALPHA)
+			angle = i * 10  # 10 degrees per frame
 			
-			# Draw rotating arc
+			# Draw rotating arcs with black outline
 			for j in range(3):
 				start_angle = (angle + j * 120) * 3.14159 / 180
-				end_angle = (angle + j * 120 + 30) * 3.14159 / 180
-				pygame.draw.arc(surf, (255, 255, 255, 200), 
-							   (50, 50, 100, 100), start_angle, end_angle, 10)
+				end_angle = (angle + j * 120 + 40) * 3.14159 / 180
+				
+				# Black outline (thicker)
+				pygame.draw.arc(surf, (0, 0, 0, 255), 
+							   (40, 40, 220, 220), start_angle, end_angle, 18)
+				# White fill
+				pygame.draw.arc(surf, (255, 255, 255, 255), 
+							   (40, 40, 220, 220), start_angle, end_angle, 12)
 			
-			self.gif_frames.append(surf)
-		
-		self.frame_duration = 0.08  # Faster for placeholder
-		print(f"Created {len(self.gif_frames)} animation frames")
+			self.circle_frames.append(surf)
+		print(f"Created {len(self.circle_frames)} circle animation frames")
 	
 	def load_custom_font(self, font_name, size):
 		"""Load custom font or fallback to default"""
@@ -176,6 +191,9 @@ class LoadingScreen:
 				self.frame_timer -= self.frame_duration
 				self.current_frame_index = (self.current_frame_index + 1) % len(self.gif_frames)
 		
+		# Update circle rotation (faster than GIF)
+		self.circle_angle = (self.circle_angle + 360 * dt * 0.8) % 360  # Rotate 0.8 rotations per second
+		
 		# Check for mouse click after prompt is shown
 		if self.elapsed_time >= self.show_prompt_after:
 			# Check for any mouse button click
@@ -189,18 +207,20 @@ class LoadingScreen:
 	
 	def draw(self):
 		"""Draw loading screen"""
-		# Draw black background
-		self.display_surface.blit(self.background, (0, 0))
-		
-		# Draw GIF animation in center
+		# Draw GIF as full-screen background
 		if self.gif_frames:
 			current_frame = self.gif_frames[self.current_frame_index]
-			frame_rect = current_frame.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 - 50))
-			self.display_surface.blit(current_frame, frame_rect)
+			self.display_surface.blit(current_frame, (0, 0))
 		else:
-			# Debug: Draw a simple white rectangle if no frames
-			pygame.draw.rect(self.display_surface, (255, 255, 255), 
-							(WINDOW_WIDTH // 2 - 100, WINDOW_HEIGHT // 2 - 100, 200, 200))
+			# Fallback black background
+			self.display_surface.blit(self.background, (0, 0))
+		
+		# Draw rotating circle overlay on top
+		if self.circle_frames:
+			circle_frame_index = int(self.circle_angle / 10) % len(self.circle_frames)
+			current_circle = self.circle_frames[circle_frame_index]
+			circle_rect = current_circle.get_rect(center=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2))
+			self.display_surface.blit(current_circle, circle_rect)
 		
 		# Draw "Click anywhere to continue" after delay
 		if self.elapsed_time >= self.show_prompt_after:
