@@ -6,6 +6,7 @@ from settings import *
 from menu_pokemon import PokemonMainMenu
 from main import Game
 from save_system import SaveSystem, create_game_state_snapshot, apply_game_state
+from loading_screen import LoadingScreen
 from loading_screen import LoadingScreenme_state
 
 class PokemonGame:
