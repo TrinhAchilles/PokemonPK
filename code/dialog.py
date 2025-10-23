@@ -96,6 +96,7 @@ class DialogSprite(pygame.sprite.Sprite):
 		"""
 		super().__init__(groups)
 		self.z = WORLD_LAYERS['top']
+		self.is_ui = True  # Mark as UI element to skip camera offset
 
 		# Dialog box dimensions (classic RPG style at bottom of screen)
 		box_width = WINDOW_WIDTH - 80  # Leave 40px margin on each side

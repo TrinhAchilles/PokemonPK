@@ -59,18 +59,22 @@ class AllSprites(pygame.sprite.Group):
 		# Draw each layer
 		for layer in (bg_sprites, main_sprites, fg_sprites):
 			for sprite in layer:
+				# Check if this is a UI element (no camera offset)
+				is_ui = hasattr(sprite, 'is_ui') and sprite.is_ui
+				offset = vector(0, 0) if is_ui else self.offset
+				
 				# Draw shadow for entities
 				if isinstance(sprite, Entity):
-					shadow_pos = sprite.rect.topleft + self.offset + vector(40, 110)
+					shadow_pos = sprite.rect.topleft + offset + vector(40, 110)
 					self.display_surface.blit(self.shadow_surf, shadow_pos)
 				
 				# Draw sprite
-				self.display_surface.blit(sprite.image, sprite.rect.topleft + self.offset)
+				self.display_surface.blit(sprite.image, sprite.rect.topleft + offset)
 				
 				# Draw notice indicator for player
 				if sprite == player and hasattr(player, 'noticed') and player.noticed:
 					rect = self.notice_surf.get_frect(midbottom=sprite.rect.midtop)
-					self.display_surface.blit(self.notice_surf, rect.topleft + self.offset)
+					self.display_surface.blit(self.notice_surf, rect.topleft + offset)
 
 class BattleSprites(pygame.sprite.Group):
 	"""Sprite group for battle rendering with outline highlighting"""
