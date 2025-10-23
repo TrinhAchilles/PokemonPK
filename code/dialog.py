@@ -199,10 +199,12 @@ class DialogSprite(pygame.sprite.Sprite):
 		text_rect = text_surf.get_frect(topleft=(padding, name_offset + padding + 10))
 		surf.blit(text_surf, text_rect)
 		
-		# Draw "Press SPACE" indicator in bottom right
+		# Draw "Press SPACE" indicator in bottom right (but left of portrait)
 		small_font = pygame.font.Font(None, 24)
 		indicator_surf = small_font.render("Press SPACE", False, COLORS['light-gray'])
-		indicator_rect = indicator_surf.get_frect(bottomright=(box_width - padding, total_height - padding + 5))
+		# Position to the left of the portrait area
+		indicator_x = text_area_width - indicator_surf.get_width()
+		indicator_rect = indicator_surf.get_frect(bottomleft=(indicator_x, total_height - padding + 5))
 		surf.blit(indicator_surf, indicator_rect)
 
 		# Set sprite image and position at bottom of screen
