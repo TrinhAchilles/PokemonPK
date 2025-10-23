@@ -109,9 +109,12 @@ class DialogSprite(pygame.sprite.Sprite):
 		
 		# Draw semi-transparent dark background
 		background_rect = surf.get_frect(topleft=(0, 0))
+		# Convert color to tuple with alpha channel
+		dark_color = pygame.Color(COLORS['dark'])
+		background_color = (dark_color.r, dark_color.g, dark_color.b, 230)
 		pygame.draw.rect(
 			surf, 
-			(*pygame.Color(COLORS['dark']).rgb, 230),  # Dark with transparency
+			background_color,
 			background_rect, 
 			0,  # Filled
 			8   # Border radius
