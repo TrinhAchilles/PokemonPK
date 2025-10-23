@@ -103,13 +103,17 @@ class DialogSprite(pygame.sprite.Sprite):
 		box_height = 140
 		padding = 20
 		name_height = 35
+		name_offset = 20  # How much the name box sticks out above dialog
 		
-		# Create main surface with transparency
-		surf = pygame.Surface((box_width, box_height), pygame.SRCALPHA)
+		# Create main surface with extra height for name box
+		total_height = box_height + name_offset
+		surf = pygame.Surface((box_width, total_height), pygame.SRCALPHA)
 		surf.fill((0, 0, 0, 0))
 		
-		# Draw semi-transparent dark background
-		background_rect = surf.get_frect(topleft=(0, 0))
+		# Draw semi-transparent dark background (offset down to make room for name)
+		background_rect = surf.get_frect(topleft=(0, name_offset))
+		background_rect.width = box_width
+		background_rect.height = box_height
 		# Convert color to tuple with alpha channel
 		dark_color = pygame.Color(COLORS['dark'])
 		background_color = (dark_color.r, dark_color.g, dark_color.b, 230)
@@ -130,10 +134,10 @@ class DialogSprite(pygame.sprite.Sprite):
 			8   # Border radius
 		)
 		
-		# Draw character name box
+		# Draw character name box (now fully visible at top)
 		name_surf = font.render(character_name, False, COLORS['white'])
 		name_box_width = name_surf.get_width() + 30
-		name_box_rect = pygame.FRect(15, -name_height // 2, name_box_width, name_height)
+		name_box_rect = pygame.FRect(15, 0, name_box_width, name_height)
 		
 		pygame.draw.rect(
 			surf, 
@@ -157,14 +161,14 @@ class DialogSprite(pygame.sprite.Sprite):
 		# Render and wrap text for the message
 		text_surf = font.render(message, False, COLORS['white'])
 		
-		# Blit message text
-		text_rect = text_surf.get_frect(topleft=(padding, padding + 10))
+		# Blit message text (adjust for name offset)
+		text_rect = text_surf.get_frect(topleft=(padding, name_offset + padding + 10))
 		surf.blit(text_surf, text_rect)
 		
 		# Draw "Press SPACE" indicator in bottom right
 		small_font = pygame.font.Font(None, 24)
 		indicator_surf = small_font.render("Press SPACE", False, COLORS['light-gray'])
-		indicator_rect = indicator_surf.get_frect(bottomright=(box_width - padding, box_height - padding + 5))
+		indicator_rect = indicator_surf.get_frect(bottomright=(box_width - padding, total_height - padding + 5))
 		surf.blit(indicator_surf, indicator_rect)
 
 		# Set sprite image and position at bottom of screen
