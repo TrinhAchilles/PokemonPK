@@ -104,11 +104,18 @@ class DialogSprite(pygame.sprite.Sprite):
 		padding = 20
 		name_height = 35
 		name_offset = 20  # How much the name box sticks out above dialog
+		portrait_size = 100  # Size of character portrait
+		portrait_padding = 10
 		
 		# Create main surface with extra height for name box
 		total_height = box_height + name_offset
 		surf = pygame.Surface((box_width, total_height), pygame.SRCALPHA)
 		surf.fill((0, 0, 0, 0))
+		
+		# Get character sprite image
+		character_image = character.image.copy()
+		# Scale character sprite to fit portrait area
+		portrait_surf = pygame.transform.scale(character_image, (portrait_size, portrait_size))
 		
 		# Draw semi-transparent dark background (offset down to make room for name)
 		background_rect = surf.get_frect(topleft=(0, name_offset))
@@ -158,8 +165,35 @@ class DialogSprite(pygame.sprite.Sprite):
 		name_rect = name_surf.get_frect(center=(name_box_rect.centerx, name_box_rect.centery))
 		surf.blit(name_surf, name_rect)
 		
+		# Draw character portrait on the right side
+		portrait_x = box_width - portrait_size - portrait_padding
+		portrait_y = name_offset + (box_height - portrait_size) // 2
+		
+		# Draw portrait background
+		portrait_bg_rect = pygame.FRect(portrait_x - 5, portrait_y - 5, portrait_size + 10, portrait_size + 10)
+		pygame.draw.rect(
+			surf,
+			COLORS['gray'],
+			portrait_bg_rect,
+			0,  # Filled
+			8   # Border radius
+		)
+		pygame.draw.rect(
+			surf,
+			COLORS['white'],
+			portrait_bg_rect,
+			3,  # Border width
+			8   # Border radius
+		)
+		
+		# Blit character portrait
+		surf.blit(portrait_surf, (portrait_x, portrait_y))
+		
 		# Render and wrap text for the message
 		text_surf = font.render(message, False, COLORS['white'])
+		
+		# Calculate text area width (leave space for portrait)
+		text_area_width = box_width - portrait_size - portrait_padding * 3
 		
 		# Blit message text (adjust for name offset)
 		text_rect = text_surf.get_frect(topleft=(padding, name_offset + padding + 10))
